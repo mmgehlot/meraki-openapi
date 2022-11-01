@@ -11,7 +11,7 @@ on:
     tags: [v*.*-*]
 
 env:
-  API_SPEC: openapi/spec2.json # e.g. openapi/spec2.json
+  API_SPEC: openapi/cart.json # e.g. openapi/spec2.json
   APIX_SERVICE: meraki_dashboard
   APIX_CLI_NAME: apiregistryctl
   APIX_CLI_DOWNLOAD_URL: https://static.production.devnetcloud.com/libs/apixmanager-cli/latest/linux/amd64/apiregistryctl
@@ -30,6 +30,7 @@ jobs:
   # analyze API specs
   # by default, it fails if there is any findings in error severity.
   # additionally, `--fail-below-score int` could be used to fail this step with specified minimal target score.
+  
   analyze:
     runs-on: ubuntu-latest
     steps:
@@ -55,7 +56,19 @@ jobs:
           version: ${{ env.APIX_CLI_VERSION }}
       - name: APIx - Diff API SPec
         run: |
-          apiregistryctl diff ${{ env.API_SPEC }} -s ${{ env.APIX_SERVICE }} --latest --fail-on-incompatible 
+          apiregistryctl diff ${{ env.API_SPEC }} -s ${{ env.APIX_SERVICE }} --latest -o markdown > change_log.md
+      - name: setup git config
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git config user.name "GitHub Actions Bot"
+          git config user.email "gehlot.21@gmail.com"          
+      - name: commit
+        run: |
+          # Stage the file, commit and push
+          git add change_log.md
+          git commit -m "new change log commit"
+          git push origin $(git symbolic-ref --short HEAD)
+          
   upload:
     # Use `needs` to define prerequisite jobs, e.g. only upload when step `analyze` and `diff` is successful.
     # needs: [ analyze, diff]
