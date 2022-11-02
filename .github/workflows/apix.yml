@@ -57,14 +57,14 @@ jobs:
           version: ${{ env.APIX_CLI_VERSION }}
       - name: APIx - Diff API SPec
         run: |
-          apiregistryctl diff ${{ env.API_SPEC }} -s ${{ env.APIX_SERVICE }} --latest -o markdown | tee ${{ env.CHANGE_LOG_FILE_NAME }}
+          apiregistryctl diff ${{ env.API_SPEC }} -s ${{ env.APIX_SERVICE }} --latest  --fail-on-incompatible -o markdown | tee ${{ env.CHANGE_LOG_FILE_NAME }}
       - name: setup git config
         run: |
           # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
           git config user.name "GitHub Actions Bot"
           git config user.email "gehlot.21@gmail.com"     
       - name: commit
-#         if: startsWith(github.ref, 'refs/tags/v')      
+        if: startsWith(github.ref, 'refs/tags/v')      
         run: |
           # Stage the file, commit and push
           git add ${{ env.CHANGE_LOG_FILE_NAME }}
