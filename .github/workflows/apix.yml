@@ -56,7 +56,7 @@ jobs:
           version: ${{ env.APIX_CLI_VERSION }}
       - name: APIx - Diff API SPec
         run: |
-          apiregistryctl diff ${{ env.API_SPEC }} -s ${{ env.APIX_SERVICE }} --latest -o markdown > change_log.md
+          apiregistryctl diff ${{ env.API_SPEC }} -s ${{ env.APIX_SERVICE }} --latest -o markdown | tee change_log.md
       - name: setup git config
         run: |
           # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
