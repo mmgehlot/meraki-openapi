@@ -46,7 +46,6 @@ jobs:
           apiregistryctl analyze ${{ env.API_SPEC }} --fail-below-score 80
   diff:
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v3
       - name: APIx - Install CLI
@@ -64,6 +63,7 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "gehlot.21@gmail.com"          
       - name: commit
+        if: startsWith(github.ref, 'refs/tags/v')      
         run: |
           # Stage the file, commit and push
           git add change_log.md
