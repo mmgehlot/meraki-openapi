@@ -23,6 +23,7 @@ env:
   APIX_OAUTH2_TOKEN_URL: https://auth-devnet-stg.cisco.com/v1/auth/oauth/token
   APIX_OAUTH2_CLIENT_ID: bu-service-client
   APIX_OAUTH2_CLIENT_SECRET: ${{ secrets.APIX_OAUTH2_CLIENT_SECRET }}
+  CHANGE_LOG_FILE_NAME: change_log_new.md
   RELEASE_REVISON: 10
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -56,9 +57,7 @@ jobs:
           version: ${{ env.APIX_CLI_VERSION }}
       - name: APIx - Diff API SPec
         run: |
-          apiregistryctl diff ${{ env.API_SPEC }} -s ${{ env.APIX_SERVICE }} --latest -o markdown | tee change_log.md
-          echo "Printing change_log.md"
-          cat change_log.md
+          apiregistryctl diff ${{ env.API_SPEC }} -s ${{ env.APIX_SERVICE }} --latest -o markdown | tee ${{ env.CHANGE_LOG_FILE_NAME }}
       - name: setup git config
         run: |
           # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
@@ -68,7 +67,7 @@ jobs:
 #         if: startsWith(github.ref, 'refs/tags/v')      
         run: |
           # Stage the file, commit and push
-          git add change_log.md
+          git add ${{ env.CHANGE_LOG_FILE_NAME }}
           git commit -m "new change log commit"
           git push origin $(git symbolic-ref --short HEAD)
           
