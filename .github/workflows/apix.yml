@@ -102,3 +102,4 @@ jobs:
       - name: APIx - Upload API SPec
         run: |
           apiregistryctl service uploadspec ${{ env.API_SPEC }} -s ${{ env.APIX_SERVICE }} --revision ${{ env.RELEASE_REVISON }}
+          
