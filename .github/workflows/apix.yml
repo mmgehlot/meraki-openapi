@@ -23,7 +23,7 @@ env:
   APIX_OAUTH2_TOKEN_URL: https://auth-devnet-stg.cisco.com/v1/auth/oauth/token
   APIX_OAUTH2_CLIENT_ID: bu-service-client
   APIX_OAUTH2_CLIENT_SECRET: ${{ secrets.APIX_OAUTH2_CLIENT_SECRET }}
-  CHANGE_LOG_FILE_NAME: change_log_new.md
+  CHANGE_LOG_FILE_NAME: change_log.md
   RELEASE_REVISON: 10
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
