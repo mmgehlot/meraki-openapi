@@ -42,20 +42,6 @@ jobs:
           uri: ${{ env.APIX_CLI_DOWNLOAD_URL }}
           name: ${{ env.APIX_CLI_NAME }}
           version: ${{ env.APIX_CLI_VERSION }}
-      - name: APIx - Analyze API Spec
-        run: |
-          apiregistryctl analyze ${{ env.API_SPEC }}
-  diff:
-    needs: [ analyze ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: APIx - Install CLI
-        uses: supplypike/setup-bin@v1
-        with:
-          uri: ${{ env.APIX_CLI_DOWNLOAD_URL }}
-          name: ${{ env.APIX_CLI_NAME }}
-          version: ${{ env.APIX_CLI_VERSION }}
       - name: Set tag env
         run: echo "RELEASE_TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Echo tag env
@@ -71,6 +57,21 @@ jobs:
             console.log(items)
             core.setOutput('version', items[0])
             core.setOutput('revision', items[1])          
+            
+      - name: APIx - Analyze API Spec
+        run: |
+          apiregistryctl analyze ${{ env.API_SPEC }}
+  diff:
+    needs: [ analyze ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: APIx - Install CLI
+        uses: supplypike/setup-bin@v1
+        with:
+          uri: ${{ env.APIX_CLI_DOWNLOAD_URL }}
+          name: ${{ env.APIX_CLI_NAME }}
+          version: ${{ env.APIX_CLI_VERSION }}
       - name: APIx - Diff API SPec
         run: |
           # analyze spec log output to terminal and save it to change log file
