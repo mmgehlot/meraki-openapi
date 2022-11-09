@@ -44,7 +44,7 @@ jobs:
           version: ${{ env.APIX_CLI_VERSION }}
       - name: APIx - Analyze API Spec
         run: |
-          apiregistryctl analyze ${{ env.API_SPEC }} --fail-below-score 80
+          apiregistryctl analyze ${{ env.API_SPEC }}
   diff:
     needs: [ analyze ]
     runs-on: ubuntu-latest
