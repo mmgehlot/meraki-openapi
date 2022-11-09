@@ -63,7 +63,7 @@ jobs:
         run: |
           apiregistryctl analyze ${{ env.API_SPEC }}
   diff:
-    needs: [ analyze ]
+    #needs: [ analyze ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -80,7 +80,7 @@ jobs:
           
   release:
     # Use `needs` to define prerequisite jobs, e.g. only upload when step `analyze` and `diff` is successful.
-    needs: [ analyze, diff]
+    #needs: [ analyze, diff]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
