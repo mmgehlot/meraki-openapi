@@ -3,7 +3,6 @@
 # 2. add below workflow in your github repo.
 
 name: APIx
-
 on:
   push:
     branches:
