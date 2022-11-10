@@ -75,7 +75,23 @@ jobs:
       - name: APIx - Diff API SPec
         run: |
           # generate the change log
-          apiregistryctl diff ${{ env.API_SPEC }} -s ${{ env.APIX_SERVICE }} --latest  --fail-on-incompatible
+          apiregistryctl diff ${{ env.API_SPEC }} -s ${{ env.APIX_SERVICE }} --latest -o markdown | tee ${{ env.CHANGE_LOG_FILE_NAME }}
+          
+      - name: Read change log and use it as a body of new release
+        id: read_release
+        shell: bash
+        run: |
+          r=$(cat ${{ env.CHANGE_LOG_FILE_NAME }})                       # <--- Read release.md (Provide correct path as per your repo)
+          r="${r//'%'/'%25'}"                               # Multiline escape sequences for %
+          r="${r//$'\n'/'%0A'}"                             # Multiline escape sequences for '\n'
+          r="${r//$'\r'/'%0D'}"                             # Multiline escape sequences for '\r'
+          echo "::set-output name=RELEASE_BODY::$r"         # <--- Set environment variable
+
+          file: target/release/${{ env.CHANGE_LOG_FILE_NAME }}
+          asset_name: ${{ env.CHANGE_LOG_FILE_NAME }}
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: $r
           
   release:
     # Use `needs` to define prerequisite jobs, e.g. only upload when step `analyze` and `diff` is successful.
@@ -121,6 +137,29 @@ jobs:
           # analyze spec log output to terminal and save it to change log file
           apiregistryctl diff ${{ env.API_SPEC }} -s ${{ env.APIX_SERVICE }} --latest -o markdown | tee ${{ env.CHANGE_LOG_FILE_NAME }}
 
+      - name: Read release.md and use it as a body of new release
+        id: read_release
+        shell: bash
+        run: |
+          r=$(cat ${{ env.CHANGE_LOG_FILE_NAME }})                       # <--- Read release.md (Provide correct path as per your repo)
+          r="${r//'%'/'%25'}"                               # Multiline escape sequences for %
+          r="${r//$'\n'/'%0A'}"                             # Multiline escape sequences for '\n'
+          r="${r//$'\r'/'%0D'}"                             # Multiline escape sequences for '\r'
+          echo "::set-output name=RELEASE_BODY::$r"         # <--- Set environment variable
+
+          file: target/release/${{ env.CHANGE_LOG_FILE_NAME }}
+          asset_name: ${{ env.CHANGE_LOG_FILE_NAME }}
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: $r
+        
+      - name: Upload change log to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          tag: ${{ github.ref }}
+          body: |
+            ${{ steps.read_release.outputs.RELEASE_BODY }}
+            
           
       - name: Pubslih change log      
         run: |
