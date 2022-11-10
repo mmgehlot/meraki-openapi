@@ -86,7 +86,12 @@ jobs:
           r="${r//$'\n'/'%0A'}"                             # Multiline escape sequences for '\n'
           r="${r//$'\r'/'%0D'}"                             # Multiline escape sequences for '\r'
           echo "::set-output name=RELEASE_BODY::$r"         # <--- Set environment variable
-
+          
+      - name: Build
+        run: cargo build --release
+      - name: Upload change log to release
+        uses: svenstaro/upload-release-action@v2
+        with:
           file: target/release/${{ env.CHANGE_LOG_FILE_NAME }}
           asset_name: ${{ env.CHANGE_LOG_FILE_NAME }}
           tag: ${{ github.ref }}
