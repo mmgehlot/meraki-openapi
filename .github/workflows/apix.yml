@@ -90,7 +90,7 @@ jobs:
       - name: Upload change log to release
         uses: svenstaro/upload-release-action@v2
         with:
-          file: target/release/${{ env.CHANGE_LOG_FILE_NAME }}
+          file: ${{ env.CHANGE_LOG_FILE_NAME }}
           asset_name: ${{ env.CHANGE_LOG_FILE_NAME }}
           tag: ${{ github.ref }}
           overwrite: true
