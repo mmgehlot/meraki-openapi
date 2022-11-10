@@ -86,7 +86,7 @@ jobs:
       - name: Get current git branch name    
         uses: actions/checkout@v3
         with:
-          run: echo "CURRENT_BRANCH=${git symbolic-ref --short HEAD}" >> $CURRENT_BRANCH
+          run: echo "CURRENT_BRANCH=${git symbolic-ref --short HEAD}" >> $GITHUB_ENV
           ref: ${{ env.CURRENT_BRANCH }}
       - name: APIx - Install CLI
         uses: supplypike/setup-bin@v1
@@ -129,4 +129,5 @@ jobs:
           git config user.email  ${{ env.GIT_EMAIL }}          
           git add ${{ env.CHANGE_LOG_FILE_NAME }}
           git diff-index --quiet HEAD || git commit -m "new change log commit"
-          git push origin $(git symbolic-ref --short HEAD) --force
+          echo "Current branch: ${{ env.CURRENT_BRANCH }}"
+          git push origin ${{ env.CURRENT_BRANCH }} --force
