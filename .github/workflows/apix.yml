@@ -24,6 +24,7 @@ env:
   APIX_OAUTH2_CLIENT_SECRET: ${{ secrets.APIX_OAUTH2_CLIENT_SECRET }}
   GIT_EMAIL: abc@gmail.com
   CHANGE_LOG_FILE_NAME: change_log.md
+  CURRENT_BRANCH: $(git symbolic-ref --short HEAD)
   RELEASE_REVISON: 10
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -85,7 +86,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: $(git symbolic-ref --short HEAD)
+          ref: ${{ env.CURRENT_BRANCH }}
       - name: APIx - Install CLI
         uses: supplypike/setup-bin@v1
         with:
